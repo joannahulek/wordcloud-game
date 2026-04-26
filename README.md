@@ -1,5 +1,4 @@
 # Word Cloud Game
-___
 
 ## About
 
