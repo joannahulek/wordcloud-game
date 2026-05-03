@@ -3,10 +3,10 @@ import { type HomePageFixture, type HomePageFixtureContext, homePageFixture } fr
 import { type LayoutPageFixture, type LayoutFixtureContext, layoutFixture } from './layout-page'
 
 export type FixtureBag = {
-  fixtures: {
-    homePage: HomePageFixture
-    layoutPage: LayoutPageFixture
-  }
+    fixtures: {
+        homePage: HomePageFixture
+        layoutPage: LayoutPageFixture
+    }
 }
 
 type AppFixtures =
@@ -15,15 +15,14 @@ type AppFixtures =
   FixtureBag
 
 const test = base.extend<AppFixtures>({
-  homePage: homePageFixture.fixture,
-  layoutPage: layoutFixture.fixture,
-  fixtures: async ({ homePage, layoutPage }, use) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-      await use({
-        homePage,
-        layoutPage,
-      })
-  },
+    homePage: homePageFixture.fixture,
+    layoutPage: layoutFixture.fixture,
+    fixtures: async ({ homePage, layoutPage }, use) => {
+        await use({
+            homePage,
+            layoutPage,
+        })
+    },
 })
 
 export { expect, test }
