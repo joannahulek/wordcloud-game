@@ -1,75 +1,54 @@
-# React + TypeScript + Vite
+# Word Cloud Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## About
 
-Currently, two official plugins are available:
+**A cute and simple game where the user selects words from a word cloud that match a given definition.**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Learning goals
 
-## React Compiler
+This project focuses on building skills in component-based architecture, state management in React, type-safe data modeling with TypeScript, working with modern tools like Vite, and both unit and end-to-end testing using Playwright.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### Tech stack
 
-Note: This will impact Vite dev & build performances.
+• ⚛️ **React** • 🟦 **TypeScript** • ⚡ **Vite** • 🎭 **Playwright**
+## Project setup
 
-## Expanding the ESLint configuration
+**Make sure you have Bun installed: https://bun.sh**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Install dependencies:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+bun install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Start the development server and open the URL displayed in the terminal:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+bun dev
 ```
+
+Build the project for production:
+
+```bash
+bun build
+```
+
+## Preview
+
+**Welcome screen:**
+<p>
+<img src="public/preview/login-page.webp" alt="Welcome screen" width="250"/>
+</p>
+
+**Game boards:**
+
+<p>
+  <img src="public/preview/game-1.webp" alt="Guess board" width="250"/>
+  <img src="public/preview/game-2.webp" alt="Check board" width="250"/>
+</p>
+
+**Score board:**
+
+<p>
+<img src="public/preview/score.webp" alt="Score board" width="250"/>
+</p>
