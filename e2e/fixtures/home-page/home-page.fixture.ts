@@ -1,39 +1,30 @@
 import type { Locator, Page } from '@playwright/test'
 import { BaseFixture } from '../base.fixture'
-import {
-  createFixtureEntry,
-  type NamedFixtureContext,
-} from '../../utils/create-fixture-entry'
 
 type Selectors = {
-  HomePageRoot: string,
-  Header: string,
+    homePageRoot: string,
+    homePageHeader: string,
 }
 
 export class HomePageFixture extends BaseFixture<Selectors> {
-  public static readonly selectors: Selectors = {
-    HomePageRoot: 'home-page',
-    Header: 'home-page-header',
-  }
+    private static readonly selectors: Selectors = {
+        homePageRoot: 'home-page',
+        homePageHeader: 'home-page-header',
+    }
 
-  constructor(readonly page: Page) {
-    super(page, HomePageFixture.selectors)
-  }
+    constructor(readonly page: Page) {
+        super(page, HomePageFixture.selectors)
+    }
 
-  async goto() {
-    await this.page.goto('/')
-  }
+    async goto() {
+        await this.page.goto('/')
+    }
 
-  root(): Locator {
-    return this.page.getByTestId(this.selectors.HomePageRoot)
-  }
+    root(): Locator {
+        return this.page.getByTestId(this.selectors.homePageRoot)
+    }
 
-  header(): Locator {
-    return this.page.getByTestId(this.selectors.Header)
-  }
+    header(): Locator {
+        return this.page.getByTestId(this.selectors.homePageHeader)
+    }
 }
-
-export const homePageFixture = createFixtureEntry('homePage', HomePageFixture)
-
-export type HomePageFixtureContext =
-  NamedFixtureContext<'homePage', HomePageFixture>

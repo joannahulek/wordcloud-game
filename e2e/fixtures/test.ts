@@ -1,29 +1,24 @@
 import { expect, test as base } from '@playwright/test'
-import { type HomePageFixture, type HomePageFixtureContext, homePageFixture } from './home-page'
-import { type LayoutPageFixture, type LayoutFixtureContext, layoutFixture } from './layout-page'
+import { HomePageFixture } from './home-page'
+import { LayoutPageFixture } from './layout-page'
 
 export type FixtureBag = {
-  fixtures: {
-    homePage: HomePageFixture
-    layoutPage: LayoutPageFixture
-  }
+    fixtures: {
+        homePage: HomePageFixture
+        layoutPage: LayoutPageFixture
+    }
 }
 
-type AppFixtures =
-  HomePageFixtureContext &
-  LayoutFixtureContext &
-  FixtureBag
+const test = base.extend<FixtureBag>({
+    fixtures: async ({ page }, use) => {
+        const homePage = new HomePageFixture(page)
+        const layoutPage = new LayoutPageFixture(page)
 
-const test = base.extend<AppFixtures>({
-  homePage: homePageFixture.fixture,
-  layoutPage: layoutFixture.fixture,
-  fixtures: async ({ homePage, layoutPage }, use) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-      await use({
-        homePage,
-        layoutPage,
-      })
-  },
+        await use({
+            homePage,
+            layoutPage,
+        })
+    },
 })
 
 export { expect, test }

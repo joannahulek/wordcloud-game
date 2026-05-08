@@ -1,45 +1,36 @@
 import type { Locator, Page } from '@playwright/test'
 import { BaseFixture } from '../base.fixture'
-import {
-  createFixtureEntry,
-  type NamedFixtureContext,
-} from '../../utils/create-fixture-entry'
 
 type Selectors = {
-  LayoutRoot: string;
-  LayoutBackground: string;
-  LayoutContent: string;
+    layoutRoot: string;
+    layoutBackground: string;
+    layoutContent: string;
 }
 
 export class LayoutPageFixture extends BaseFixture<Selectors> {
-  private static readonly selectors: Selectors = {
-    LayoutRoot: 'layout-root',
-    LayoutBackground: 'layout-background',
-    LayoutContent: 'layout-content',
-  }
+    private static readonly selectors: Selectors = {
+        layoutRoot: 'layout-root',
+        layoutBackground: 'layout-background',
+        layoutContent: 'layout-content',
+    }
 
-  constructor(readonly page: Page) {
-    super(page, LayoutPageFixture.selectors)
-  }
+    constructor(readonly page: Page) {
+        super(page, LayoutPageFixture.selectors)
+    }
 
-  async goto() {
-    await this.page.goto('/')
-  }
+    async goto() {
+        await this.page.goto('/')
+    }
 
-  root(): Locator {
-    return this.page.getByTestId(this.selectors.LayoutRoot)
-  }
+    root(): Locator {
+        return this.page.getByTestId(this.selectors.layoutRoot)
+    }
 
-  background(): Locator {
-    return this.page.getByTestId(this.selectors.LayoutBackground)
-  }
+    background(): Locator {
+        return this.page.getByTestId(this.selectors.layoutBackground)
+    }
 
-  content(): Locator {
-    return this.page.getByTestId(this.selectors.LayoutContent)
-  }
+    content(): Locator {
+        return this.page.getByTestId(this.selectors.layoutContent)
+    }
 }
-
-export const layoutFixture = createFixtureEntry('layoutPage', LayoutPageFixture)
-
-export type LayoutFixtureContext =
-  NamedFixtureContext<'layoutPage', LayoutPageFixture>
