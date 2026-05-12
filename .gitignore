@@ -1,10 +1,9 @@
 # dependencies
 node_modules/
-package-lock.json
-
-# build output
 dist/
+.idea
 build/
+public/
 
 # environment variables
 .env
@@ -34,5 +33,5 @@ Thumbs.db
 coverage/
 
 # Playwright
-playwright-report/
-test-results/
+playwright-report
+test-results
