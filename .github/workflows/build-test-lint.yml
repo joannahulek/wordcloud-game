@@ -38,7 +38,7 @@ jobs:
             - name: Setup Bun 🛠️
               uses: oven-sh/setup-bun@v2
               with:
-                  bun-version: 1.x
+                  bun-version: 1.2.21
 
             - name: Get cached dependencies 🛠️
               id: cache-deps
