@@ -1,14 +1,14 @@
 name: CI
 on:
     push:
-        branches: ['master', 'main']
+        branches: ['master', 'main', 'project-setup']
         paths-ignore: [
           README.md
         ]
     pull_request:
         # opened - when PR opened, edited - when title changed, synchronize - when new changes are pushed to PR
         types: [opened, edited, synchronize]
-        branches: ['release/**', 'master', 'main']
+        branches: ['release/**', 'master', 'main', 'project-setup']
         paths-ignore: [
           README.md
         ]
