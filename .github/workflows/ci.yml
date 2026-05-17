@@ -1,0 +1,34 @@
+name: CI
+on:
+    push:
+        branches: ['master', 'main', 'project-setup']
+        paths-ignore: [
+          README.md
+        ]
+    pull_request:
+        # opened - when PR opened, edited - when title changed, synchronize - when new changes are pushed to PR
+        types: [opened, edited, synchronize]
+        branches: ['release/**', 'master', 'main', 'project-setup']
+        paths-ignore: [
+          README.md
+        ]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    setup:
+        uses: ./.github/workflows/setup.yml
+
+    code-checks:
+        needs: setup
+        uses: ./.github/workflows/code-checks.yml
+
+    tests:
+        needs: code-checks
+        uses: ./.github/workflows/tests.yml
+
+    build:
+        needs: [setup, code-checks, tests]
+        uses: ./.github/workflows/build.yml
