@@ -32,7 +32,7 @@ jobs:
             - name: Run ESLint 🚀
               run: bun run lint
 
-    type_check:
+    type-check:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout the source branch of the pull request
