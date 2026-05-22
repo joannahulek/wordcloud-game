@@ -32,3 +32,13 @@ jobs:
     build:
         needs: [setup, code-checks, tests]
         uses: ./.github/workflows/build.yml
+
+    deploy:
+        needs: build
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        permissions:
+            contents: write
+            issues: write
+            pull-requests: write
+        secrets: inherit
+        uses: ./.github/workflows/release.yml
