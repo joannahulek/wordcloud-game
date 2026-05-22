@@ -2,6 +2,10 @@ name: Release
 
 on:
     workflow_call:
+        outputs:
+            should-release:
+                description: Whether this change is allowed to release.
+                value: ${{ jobs.release-candidate.outputs.should-release }}
 
 permissions:
     contents: write

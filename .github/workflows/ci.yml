@@ -35,10 +35,24 @@ jobs:
 
     deploy:
         needs: build
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        if:
+            github.event_name == 'push' 
+            && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         permissions:
             contents: write
             issues: write
             pull-requests: write
         secrets: inherit
         uses: ./.github/workflows/release.yml
+
+    publish:
+        needs: deploy
+        if:
+            github.event_name == 'push' 
+            && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') 
+            && needs.deploy.outputs.should-release == 'true'
+        permissions:
+            contents: read
+            pages: write
+            id-token: write
+        uses: ./.github/workflows/publish.yml
