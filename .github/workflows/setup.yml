@@ -5,7 +5,7 @@ on:
     workflow_dispatch:
 
 jobs:
-    setup_environment:
+    install-deps:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout the source branch of the pull request

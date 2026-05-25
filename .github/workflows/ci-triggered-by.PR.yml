@@ -28,7 +28,7 @@ jobs:
         uses: ./.github/workflows/classify-change.yml
 
     setup:
-        name: Install dependencies
+        name: Setup
         needs: classify-change
         if: needs.classify-change.outputs.full-checks-required == 'true'
         uses: ./.github/workflows/setup.yml
