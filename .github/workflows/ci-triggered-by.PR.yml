@@ -1,0 +1,52 @@
+name: CI-triggered-by.PR
+
+on:
+    pull_request:
+        types: [opened, edited, synchronize]
+        branches: ['release/**', 'prerelease/**', 'master', 'main']
+        paths-ignore: [
+          README.md
+        ]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    classify-change:
+        name: Classify PR change
+        permissions:
+            contents: read
+            pull-requests: read
+        secrets: inherit
+        with:
+            event-name: ${{ github.event_name }}
+            ref-name: ${{ github.ref_name }}
+            head-sha: ${{ github.sha }}
+            repository: ${{ github.repository }}
+            commit-message: ${{ github.event.head_commit.message }}
+        uses: ./.github/workflows/classify-change.yml
+
+    setup:
+        name: Install dependencies
+        needs: classify-change
+        if: needs.classify-change.outputs.full-checks-required == 'true'
+        uses: ./.github/workflows/setup.yml
+
+    code-checks:
+        name: Lint and type-check
+        needs: [classify-change, setup]
+        if: needs.classify-change.outputs.full-checks-required == 'true'
+        uses: ./.github/workflows/code-checks.yml
+
+    tests:
+        name: Run tests
+        needs: [classify-change, code-checks]
+        if: needs.classify-change.outputs.full-checks-required == 'true'
+        uses: ./.github/workflows/tests.yml
+
+    build:
+        name: Build app
+        needs: [classify-change, setup, code-checks, tests]
+        if: needs.classify-change.outputs.full-checks-required == 'true'
+        uses: ./.github/workflows/build.yml

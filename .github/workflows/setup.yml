@@ -1,10 +1,12 @@
 name: Setup env
+
 on:
     workflow_call:
-    workflow_dispatch: #Allows manual run
+    workflow_dispatch:
 
 jobs:
     setup_environment:
+        name: Install Bun dependencies
         runs-on: ubuntu-latest
         steps:
             - name: Checkout the source branch of the pull request

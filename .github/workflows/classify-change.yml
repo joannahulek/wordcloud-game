@@ -1,0 +1,73 @@
+name: Classify change
+
+on:
+    workflow_call:
+        inputs:
+            event-name:
+                required: true
+                type: string
+            ref-name:
+                required: true
+                type: string
+            head-sha:
+                required: true
+                type: string
+            repository:
+                required: true
+                type: string
+            commit-message:
+                required: false
+                type: string
+                default: ''
+        outputs:
+            full-checks-required:
+                description: Whether validation and build jobs should run.
+                value: ${{ jobs.classify-change.outputs.full-checks-required }}
+            release-branch-push:
+                description: Whether this is a push to main, master, or prerelease.
+                value: ${{ jobs.classify-change.outputs.release-branch-push }}
+            merged-pr-push:
+                description: Whether this push came from a merged pull request.
+                value: ${{ jobs.classify-change.outputs.merged-pr-push }}
+
+jobs:
+    classify-change:
+        name: Decide workflow path (PR or direct merge)
+        runs-on: ubuntu-latest
+
+        outputs:
+            full-checks-required: ${{ steps.classify.outputs.full-checks-required }}
+            release-branch-push: ${{ steps.classify.outputs.release-branch-push }}
+            merged-pr-push: ${{ steps.classify.outputs.merged-pr-push }}
+
+        steps:
+            - name: Classify workflow event
+              id: classify
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  EVENT_NAME: ${{ inputs.event-name }}
+                  REF_NAME: ${{ inputs.ref-name }}
+                  HEAD_SHA: ${{ inputs.head-sha }}
+                  REPOSITORY: ${{ inputs.repository }}
+                  COMMIT_MESSAGE: ${{ inputs.commit-message }}
+              run: |
+                  release_branch_push=false
+                  merged_pr_push=false
+                  full_checks_required=true
+
+                  if [ "$EVENT_NAME" = "push" ] && { [ "$REF_NAME" = "main" ] || [ "$REF_NAME" = "master" ] || [ "$REF_NAME" = "prerelease" ]; }; then
+                      release_branch_push=true
+
+                      pr_title="$(gh api "repos/${REPOSITORY}/commits/${HEAD_SHA}/pulls" \
+                          -H "Accept: application/vnd.github+json" \
+                          --jq '.[0].title // empty' 2>/dev/null || true)"
+
+                      if [ -n "$pr_title" ] || [[ "$COMMIT_MESSAGE" =~ ^Merge\ pull\ request\  ]]; then
+                          merged_pr_push=true
+                          full_checks_required=false
+                      fi
+                  fi
+
+                  echo "full-checks-required=$full_checks_required" >> "$GITHUB_OUTPUT"
+                  echo "release-branch-push=$release_branch_push" >> "$GITHUB_OUTPUT"
+                  echo "merged-pr-push=$merged_pr_push" >> "$GITHUB_OUTPUT"

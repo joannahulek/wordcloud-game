@@ -18,6 +18,7 @@ concurrency:
 
 jobs:
     release-candidate:
+        name: Check release eligibility
         runs-on: ubuntu-latest
 
         outputs:
@@ -34,7 +35,7 @@ jobs:
               run: |
                   title="$(gh api "repos/${REPOSITORY}/commits/${HEAD_SHA}/pulls" \
                       -H "Accept: application/vnd.github+json" \
-                      --jq '.[0].title // empty')"
+                      --jq '.[0].title // empty' 2>/dev/null || true)"
 
                   if [ -z "$title" ]; then
                       title="${COMMIT_MESSAGE%%$'\n'*}"
@@ -49,6 +50,7 @@ jobs:
                   fi
 
     release:
+        name: Create Semantic Release
         needs: release-candidate
         if: needs.release-candidate.outputs.should-release == 'true'
         runs-on: ubuntu-latest

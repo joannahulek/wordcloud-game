@@ -1,20 +1,58 @@
 # Release And Publish Jobs
 
-This explains how the `deploy` and `publish` jobs are triggered.
+This explains how pull request checks, release, prerelease, and publish workflows run.
 
-## Normal Flow
+## Workflow Files
 
-The flow is defined in `.github/workflows/ci.yml`:
+`ci.yml` runs only for pull requests.
+
+`deploy.yml` runs only for pushes to:
 
 ```text
-build -> deploy -> publish
+main
+master
+prerelease
 ```
 
-`deploy` calls `.github/workflows/release.yml`.
+`classify-change.yml` decides whether a push came from a merged pull request or from a direct commit.
 
-`publish` calls `.github/workflows/publish.yml`.
+`release.yml` runs Semantic Release.
 
-`publish` only starts after `deploy` finishes successfully.
+`publish.yml` deploys the built app to GitHub Pages.
+
+## Pull Request Flow
+
+For pull requests, only validation jobs are visible:
+
+```text
+classify-change -> setup -> code-checks -> tests -> build
+```
+
+`deploy` and `publish` are not part of the pull request workflow.
+
+## Merged Pull Request Flow
+
+When a pull request is merged into `main`, `master`, or `prerelease`, `deploy.yml` runs.
+
+The validation jobs are skipped because they already passed on the pull request.
+
+The flow is:
+
+```text
+classify-change -> deploy -> publish
+```
+
+`publish` still waits for manual approval through the `github-pages` environment.
+
+## Direct Commit Flow
+
+When someone commits directly to `main`, `master`, or `prerelease`, `deploy.yml` runs everything from start to finish:
+
+```text
+classify-change -> setup -> code-checks -> tests -> build -> deploy -> publish
+```
+
+This is intentional because direct commits did not go through pull request checks first.
 
 ## What PR Name Triggers Release And Publish
 
@@ -43,34 +81,42 @@ docs: update readme
 refactor: simplify layout
 ```
 
-The check is done after the PR is merged into `main` or `master`.
+The check is done after the PR is merged.
 
-If the change is pushed directly to `main` or `master`, the first line of the commit message is checked instead of a PR title. It must also start with `feat:`, `fix:`, or `perf:`.
+For direct commits, the first line of the commit message is checked instead of a PR title. It must also start with `feat:`, `fix:`, or `perf:`.
 
-## Release Job
+## Production Releases
 
-The `deploy` job in `ci.yml` runs only when all of these are true:
+Merges or direct commits to `main` or `master` create normal production releases.
+
+Example production tags:
 
 ```text
-The build job passed.
-The event is a push.
-The target branch is main or master.
+v1.2.0
+v1.2.1
 ```
 
-Then `release.yml` checks whether the PR title or commit message starts with `feat:`, `fix:`, or `perf:`.
+## Prereleases
 
-If yes, Semantic Release runs and creates the new version tag, updates `CHANGELOG.md`, commits the changelog entry, and creates the GitHub release.
+Merges or direct commits to `prerelease` create prereleases.
 
-If no, release is skipped.
+Example prerelease tags:
+
+```text
+v1.2.0-prerelease.1
+v1.2.0-prerelease.2
+```
+
+Prerelease tags and GitHub releases are still real repository objects, but they are separated from normal production version tags.
+
+When you later merge tested changes into `main`, Semantic Release will create the normal production release from the production branch.
 
 ## Publish Job
 
-The `publish` job in `ci.yml` runs only when all of these are true:
+The `publish` job runs only when all of these are true:
 
 ```text
 The deploy job passed.
-The event is a push.
-The target branch is main or master.
 The release check returned should-release=true.
 ```
 
@@ -78,14 +124,14 @@ The release check returned should-release=true.
 
 ## Manual Trigger
 
-These jobs are reusable workflows, so they are not started from the GitHub Actions "Run workflow" button directly.
+These jobs are reusable or event-driven workflows, so release and publish are normally triggered by pushing to `main`, `master`, or `prerelease`.
 
-To manually trigger the normal release and publish flow, push an empty commit to `main` or `master` with a release prefix:
+To manually trigger the normal flow, push an empty commit with a release prefix:
 
 ```sh
-git checkout main
+git checkout prerelease
 git pull
-git commit --allow-empty -m "fix: trigger release"
+git commit --allow-empty -m "fix: trigger prerelease"
 git push
 ```
 
