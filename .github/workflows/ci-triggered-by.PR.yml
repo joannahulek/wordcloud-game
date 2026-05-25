@@ -3,7 +3,7 @@ name: CI-triggered-by.PR
 on:
     pull_request:
         types: [opened, edited, synchronize]
-        branches: ['release/**', 'prerelease/**', 'master', 'main']
+        branches: ['release/**', 'prerelease', 'master', 'main']
         paths-ignore: [
           README.md
         ]
