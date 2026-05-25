@@ -6,7 +6,6 @@ on:
 
 jobs:
     setup_environment:
-        name: Install Bun dependencies
         runs-on: ubuntu-latest
         steps:
             - name: Checkout the source branch of the pull request

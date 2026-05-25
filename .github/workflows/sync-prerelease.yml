@@ -17,7 +17,6 @@ concurrency:
 
 jobs:
     sync-prerelease:
-        name: Open sync PR to prerelease
         runs-on: ubuntu-latest
 
         steps:
@@ -59,7 +58,7 @@ jobs:
                   echo "sync-needed=true" >> "$GITHUB_OUTPUT"
                   echo "sync-branch=${sync_branch}" >> "$GITHUB_OUTPUT"
 
-            - name: Create or update sync pull request
+            - name: Open or update sync PR to prerelease
               if: steps.sync.outputs.sync-needed == 'true'
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

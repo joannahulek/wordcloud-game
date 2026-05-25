@@ -6,7 +6,7 @@ on:
 
 jobs:
     eslint:
-        name: Run ESLint
+        name: ESLint
         runs-on: ubuntu-latest
         steps:
             - name: Checkout the source branch of the pull request
@@ -35,7 +35,7 @@ jobs:
               run: bun run lint
 
     type-check:
-        name: Run TypeScript type-check
+        name: TS check
         runs-on: ubuntu-latest
         steps:
             - name: Checkout the source branch of the pull request

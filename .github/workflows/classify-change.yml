@@ -32,7 +32,6 @@ on:
 
 jobs:
     classify-change:
-        name: Decide workflow path (PR or direct merge)
         runs-on: ubuntu-latest
 
         outputs:
@@ -41,7 +40,7 @@ jobs:
             merged-pr-push: ${{ steps.classify.outputs.merged-pr-push }}
 
         steps:
-            - name: Classify workflow event
+            - name: Classify workflow event (PR or direct merge)
               id: classify
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

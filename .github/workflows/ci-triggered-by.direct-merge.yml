@@ -33,19 +33,19 @@ jobs:
         uses: ./.github/workflows/setup.yml
 
     code-checks:
-        name: Lint and type-check
+        name: Linters
         needs: [classify-change, setup]
         if: needs.classify-change.outputs.full-checks-required == 'true'
         uses: ./.github/workflows/code-checks.yml
 
     tests:
-        name: Run tests
+        name: Tests
         needs: [classify-change, code-checks]
         if: needs.classify-change.outputs.full-checks-required == 'true'
         uses: ./.github/workflows/tests.yml
 
     build:
-        name: Build app
+        name: Build
         needs: [classify-change, setup, code-checks, tests]
         if: needs.classify-change.outputs.full-checks-required == 'true'
         uses: ./.github/workflows/build.yml
