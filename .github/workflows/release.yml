@@ -49,7 +49,7 @@ jobs:
                   fi
 
     release:
-        name: Create Semantic Release
+        name: Create new tag
         needs: release-candidate
         if: needs.release-candidate.outputs.should-release == 'true'
         runs-on: ubuntu-latest

@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
     classify-change:
-        name: Classify PR change
+        name: PR
         permissions:
             contents: read
             pull-requests: read

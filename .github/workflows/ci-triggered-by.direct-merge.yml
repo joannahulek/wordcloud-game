@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
     classify-change:
-        name: Classify push
+        name: Push
         permissions:
             contents: read
             pull-requests: read
@@ -51,7 +51,7 @@ jobs:
         uses: ./.github/workflows/build.yml
 
     deploy:
-        name: Create release tag
+        name: Release
         needs: [classify-change, build]
         if:
             always()
@@ -68,7 +68,7 @@ jobs:
         uses: ./.github/workflows/release.yml
 
     publish:
-        name: Publish to GitHub Pages
+        name: Publish
         needs: deploy
         if:
             always()
