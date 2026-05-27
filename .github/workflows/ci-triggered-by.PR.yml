@@ -27,15 +27,9 @@ jobs:
             commit-message: ${{ github.event.head_commit.message }}
         uses: ./.github/workflows/classify-change.yml
 
-    setup:
-        name: Setup
-        needs: classify-change
-        if: needs.classify-change.outputs.full-checks-required == 'true'
-        uses: ./.github/workflows/setup.yml
-
     code-checks:
         name: Linters
-        needs: [classify-change, setup]
+        needs: classify-change
         if: needs.classify-change.outputs.full-checks-required == 'true'
         uses: ./.github/workflows/code-checks.yml
 
@@ -47,6 +41,6 @@ jobs:
 
     build:
         name: Build
-        needs: [classify-change, setup, code-checks, tests]
+        needs: [classify-change, code-checks, tests]
         if: needs.classify-change.outputs.full-checks-required == 'true'
         uses: ./.github/workflows/build.yml

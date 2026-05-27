@@ -4,66 +4,30 @@ on:
     workflow_call:
     workflow_dispatch:
 
+concurrency:
+    group: tests-${{ github.ref }}
+    cancel-in-progress: true
+
 jobs:
-    e2e:
-        name: e2e
+    unit:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout the source branch of the pull request
-              uses: actions/checkout@v5
-              with:
-                  ref: ${{ github.head_ref || github.ref }}
+          - name: Setup project
+            uses: ./.github/actions/setup
 
-            - name: Setup Bun 🛠️
-              uses: oven-sh/setup-bun@v2
-              with:
-                  bun-version: 1.2.21
+          - name: Run unit and integration tests 🛠️
+            run: bun run test
 
-            - name: Get cached dependencies 🛠️
-              id: cache-deps
-              uses: actions/cache@v5
-              with:
-                  path: ~/.bun/install/cache
-                  key: bun-${{ runner.os }}-${{ hashFiles('**/bun.lock') }}
-                  restore-keys: |
-                      bun-${{ runner.os }}-
+    e2e:
+        runs-on: ubuntu-latest
 
-            - name: Install dependencies 🛠️
-              run: bun install --frozen-lockfile
+        steps:
+            - name: Setup project
+              uses: ./.github/actions/setup
 
             - name: Install Playwright browsers 🛠️
               run: bunx playwright install --with-deps
 
             - name: Run end-to-end tests 🛠️
               run: bun run test:e2e
-
-    unit:
-        name: unit
-        runs-on: ubuntu-latest
-
-        steps:
-            - name: Checkout the source branch of the pull request
-              uses: actions/checkout@v5
-              with:
-                  ref: ${{ github.head_ref || github.ref }}
-
-            - name: Setup Bun 🛠️
-              uses: oven-sh/setup-bun@v2
-              with:
-                  bun-version: 1.2.21
-
-            - name: Get cached dependencies 🛠️
-              id: cache-deps
-              uses: actions/cache@v5
-              with:
-                  path: ~/.bun/install/cache
-                  key: bun-${{ runner.os }}-${{ hashFiles('**/bun.lock') }}
-                  restore-keys: |
-                      bun-${{ runner.os }}-
-
-            - name: Install dependencies 🛠️
-              run: bun install --frozen-lockfile
-
-            - name: Run unit and integration tests 🛠️
-              run: bun run test
