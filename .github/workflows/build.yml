@@ -8,8 +8,15 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
+            - name: Checkout source
+              uses: actions/checkout@v5
+              with:
+                  ref: ${{ github.head_ref || github.ref }}
+
             - name: Setup project
               uses: ./.github/actions/setup
+              with:
+                  skip-checkout: 'true'
 
             - name: Build 🛠️
               run: bun run build

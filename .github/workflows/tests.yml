@@ -10,24 +10,40 @@ concurrency:
 
 jobs:
     unit:
+        name: unit
         runs-on: ubuntu-latest
 
         steps:
-          - name: Setup project
-            uses: ./.github/actions/setup
+            - name: Checkout source
+              uses: actions/checkout@v5
+              with:
+                  ref: ${{ github.head_ref || github.ref }}
 
-          - name: Run unit and integration tests 🛠️
-            run: bun run test
-
-    e2e:
-        runs-on: ubuntu-latest
-
-        steps:
             - name: Setup project
               uses: ./.github/actions/setup
+              with:
+                  skip-checkout: 'true'
 
-            - name: Install Playwright browsers 🛠️
-              run: bunx playwright install --with-deps
+            - name: Run unit and integration tests 🛠️
+              run: bun run test
 
-            - name: Run end-to-end tests 🛠️
-              run: bun run test:e2e
+    e2e:
+      name: e2e
+      runs-on: ubuntu-latest
+
+      steps:
+          - name: Checkout source
+            uses: actions/checkout@v5
+            with:
+                ref: ${{ github.head_ref || github.ref }}
+
+          - name: Setup project
+            uses: ./.github/actions/setup
+            with:
+                skip-checkout: 'true'
+
+          - name: Install Playwright browsers 🛠️
+            run: bunx playwright install --with-deps
+
+          - name: Run end-to-end tests 🛠️
+            run: bun run test:e2e

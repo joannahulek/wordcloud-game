@@ -6,21 +6,35 @@ on:
 
 jobs:
     eslint:
-        name: ESLint
-        runs-on: ubuntu-latest
-        steps:
-            - name: Setup project
-              uses: ./.github/actions/setup
+      name: ESLint
+      runs-on: ubuntu-latest
+      steps:
+          - name: Checkout source
+            uses: actions/checkout@v5
+            with:
+                ref: ${{ github.head_ref || github.ref }}
 
-            - name: Run ESLint 🚀
-              run: bun run lint
+          - name: Setup project
+            uses: ./.github/actions/setup
+            with:
+               skip-checkout: 'true'
+
+          - name: Run ESLint 🚀
+            run: bun run lint
 
     type-check:
         name: TS check
         runs-on: ubuntu-latest
         steps:
+            - name: Checkout source
+              uses: actions/checkout@v5
+              with:
+                  ref: ${{ github.head_ref || github.ref }}
+
             - name: Setup project
               uses: ./.github/actions/setup
+              with:
+                  skip-checkout: 'true'
 
             - name: Run type checking 🚀
               run: bun run type-check
