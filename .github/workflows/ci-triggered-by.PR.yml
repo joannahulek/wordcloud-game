@@ -1,0 +1,46 @@
+name: CI-triggered-by.PR
+
+on:
+    pull_request:
+        types: [opened, edited, synchronize]
+        branches: ['release/**', 'prerelease', 'master', 'main']
+        paths-ignore: [
+          README.md
+        ]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    classify-change:
+        name: PR
+        permissions:
+            contents: read
+            pull-requests: read
+        secrets: inherit
+        with:
+            event-name: ${{ github.event_name }}
+            ref-name: ${{ github.ref_name }}
+            head-sha: ${{ github.sha }}
+            repository: ${{ github.repository }}
+            commit-message: ${{ github.event.head_commit.message }}
+        uses: ./.github/workflows/classify-change.yml
+
+    code-checks:
+        name: Linters
+        needs: classify-change
+        if: needs.classify-change.outputs.full-checks-required == 'true'
+        uses: ./.github/workflows/code-checks.yml
+
+    tests:
+        name: Tests
+        needs: [classify-change, code-checks]
+        if: needs.classify-change.outputs.full-checks-required == 'true'
+        uses: ./.github/workflows/tests.yml
+
+    build:
+        name: Build
+        needs: [classify-change, code-checks, tests]
+        if: needs.classify-change.outputs.full-checks-required == 'true'
+        uses: ./.github/workflows/build.yml
