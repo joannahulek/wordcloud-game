@@ -1,0 +1,76 @@
+name: Release
+
+on:
+    workflow_call:
+        outputs:
+            should-release:
+                description: Whether this change is allowed to release.
+                value: ${{ jobs.release-candidate.outputs.should-release }}
+
+permissions:
+    contents: write
+    issues: write
+    pull-requests: write
+
+concurrency:
+    group: release-${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+    release-candidate:
+        runs-on: ubuntu-latest
+
+        outputs:
+            should-release: ${{ steps.release-title.outputs.should-release }}
+
+        steps:
+            - name: Resolve release title
+              id: release-title
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  HEAD_SHA: ${{ github.sha }}
+                  REPOSITORY: ${{ github.repository }}
+                  COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+              run: |
+                  title="$(gh api "repos/${REPOSITORY}/commits/${HEAD_SHA}/pulls" \
+                      -H "Accept: application/vnd.github+json" \
+                      --jq '.[0].title // empty' 2>/dev/null || true)"
+
+                  if [ -z "$title" ]; then
+                      title="${COMMIT_MESSAGE%%$'\n'*}"
+                  fi
+
+                  if [[ "$title" =~ ^(feat|fix|perf): ]]; then
+                      echo "should-release=true" >> "$GITHUB_OUTPUT"
+                      echo "Release allowed for: $title"
+                  else
+                      echo "should-release=false" >> "$GITHUB_OUTPUT"
+                      echo "Release skipped for: $title"
+                  fi
+
+    release:
+        name: Create new tag
+        needs: release-candidate
+        if: needs.release-candidate.outputs.should-release == 'true'
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v5
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v5
+              with:
+                  node-version: 24
+
+            - name: Setup project
+              uses: ./.github/actions/setup
+              with:
+                  skip-checkout: 'true'
+
+            - name: Release 🚀
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: bun run release
