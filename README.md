@@ -21,16 +21,28 @@ Install dependencies:
 bun install
 ```
 
+Install Playwright browsers:
+
+```bash
+bunx playwright install
+```
+
 Start the development server and open the URL displayed in the terminal:
 
 ```bash
-bun dev
+bun run dev
 ```
 
 Build the project for production:
 
 ```bash
-bun build
+bun run build
+```
+
+Run end-to-end tests:
+
+```bash
+bun run test:e2e
 ```
 
 ## Preview

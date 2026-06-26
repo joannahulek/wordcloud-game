@@ -1,0 +1,35 @@
+name: Setup project
+description: Checkout repository, setup Bun and install dependencies
+
+inputs:
+    skip-checkout:
+        description: Skip the checkout step (use when the caller already checked out with custom options)
+        required: false
+        default: 'false'
+
+runs:
+    using: composite
+
+    steps:
+        - name: Checkout source
+          if: inputs.skip-checkout != 'true'
+          uses: actions/checkout@v5
+          with:
+              ref: ${{ github.head_ref || github.ref }}
+
+        - name: Setup Bun 🛠️
+          uses: oven-sh/setup-bun@v2
+          with:
+              bun-version: 1.2.21
+
+        - name: Restore Bun cache 🛠️
+          uses: actions/cache@v5
+          with:
+              path: ~/.bun/install/cache
+              key: bun-${{ runner.os }}-${{ hashFiles('**/bun.lock') }}
+              restore-keys: |
+                bun-${{ runner.os }}-
+
+        - name: Install dependencies 🛠️
+          shell: bash
+          run: bun install --frozen-lockfile

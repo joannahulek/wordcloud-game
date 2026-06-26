@@ -35,9 +35,9 @@ export default [
             react: { version: "detect" },
         },
         rules: {
-            "no-console": ["warn", { allow: ["warn", "error"] }],
+            "no-console": ["error", { allow: ["warn", "error"] }],
             "no-debugger": "warn",
-            "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+            "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
             "react/react-in-jsx-scope": "off",
             "react/prop-types": "off",
 

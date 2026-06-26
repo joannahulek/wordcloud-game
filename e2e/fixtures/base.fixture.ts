@@ -6,12 +6,12 @@ export type FixtureSelectors<TSelectors extends object = object> =
   BaseSelectors & TSelectors
 
 export class BaseFixture<TSelectors extends object = object> {
-  public readonly selectors: FixtureSelectors<TSelectors>
+    public readonly selectors: FixtureSelectors<TSelectors>
 
-  constructor(
-    protected readonly page: Page,
-    selectors: TSelectors,
-  ) {
-    this.selectors = selectors
-  }
+    constructor(
+        protected readonly page: Page,
+        selectors: TSelectors,
+    ) {
+        this.selectors = selectors
+    }
 }
