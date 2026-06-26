@@ -1,5 +1,5 @@
-import { Input } from "../../layout/components/input/Input.tsx";
-import { Button } from "../../layout/components/button/Button.tsx";
+import { Input } from "../../layout/components/input/input.tsx";
+import { Button } from "../../layout/components/button/button.tsx";
 import React from "react";
 
 export function LoginPage() {
