@@ -16,6 +16,7 @@ export function Layout({ children }: { children: ReactNode }) {
                 aria-hidden="true"
                 data-test="layout-background"
             />
+            <div className="hero" data-test="hero"><h1>Wordcloud game</h1></div>
             <div className="layout-content" data-test="layout-content">
                 {children}
             </div>
